@@ -9,7 +9,7 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/alexbrainman/odbc/api"
+	"github.com/xiaofengshuyu/odbc/api"
 )
 
 type Stmt struct {
@@ -77,7 +77,7 @@ func (s *Stmt) Exec(args []driver.Value) (driver.Result, error) {
 			break
 		}
 	}
-	return &Result{rowCount: sumRowCount}, nil
+	return &Result{c: s.c, rowCount: sumRowCount}, nil
 }
 
 func (s *Stmt) Query(args []driver.Value) (driver.Rows, error) {
