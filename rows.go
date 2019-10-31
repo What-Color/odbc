@@ -5,8 +5,10 @@
 package odbc
 
 import (
+	"database/sql"
 	"database/sql/driver"
 	"io"
+	"reflect"
 
 	"github.com/xiaofengshuyu/odbc/api"
 )
@@ -63,4 +65,56 @@ func (r *Rows) NextResultSet() error {
 		return err
 	}
 	return nil
+}
+
+var (
+	scanTypeNullFloat  = reflect.TypeOf(sql.NullFloat64{})
+	scanTypeNullInt    = reflect.TypeOf(sql.NullInt64{})
+	scanTypeNullString = reflect.TypeOf(sql.NullString{})
+	scanTypeNullBool   = reflect.TypeOf(sql.NullBool{})
+	scanTypeNullTime   = reflect.TypeOf(NullTime{})
+	scanTypeRawBytes   = reflect.TypeOf(sql.RawBytes{})
+	scanTypeUnknown    = reflect.TypeOf(new(interface{}))
+)
+
+func (r *Rows) ColumnTypeScanType(i int) reflect.Type {
+	switch x := r.os.Cols[i].(type) {
+	case *BindableColumn:
+		return cTypeScanType(x.CType)
+	case *NonBindableColumn:
+		return cTypeScanType(x.CType)
+	}
+	return scanTypeUnknown
+}
+
+func cTypeScanType(ctype api.SQLSMALLINT) reflect.Type {
+	switch ctype {
+	case api.SQL_C_BIT:
+		return scanTypeNullBool
+	case api.SQL_C_LONG:
+		return scanTypeNullInt
+	case api.SQL_C_SBIGINT:
+		return scanTypeNullInt
+	case api.SQL_C_DOUBLE:
+		return scanTypeNullFloat
+	case api.SQL_C_CHAR:
+		return scanTypeNullString
+	case api.SQL_C_WCHAR:
+		return scanTypeNullString
+	case api.SQL_C_TYPE_TIMESTAMP:
+		return scanTypeNullTime
+	case api.SQL_C_GUID:
+		return scanTypeNullTime
+	case api.SQL_C_DATE:
+		return scanTypeNullTime
+	case api.SQL_C_TIME:
+		return scanTypeNullTime
+	case api.SQL_C_BINARY:
+		if ctype == api.SQL_SS_TIME2 {
+			return scanTypeNullTime
+		}
+		return scanTypeRawBytes
+	default:
+		return scanTypeUnknown
+	}
 }
