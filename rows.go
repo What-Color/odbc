@@ -10,7 +10,7 @@ import (
 	"io"
 	"reflect"
 
-	"github.com/xiaofengshuyu/odbc/api"
+	"github.com/What-Color/odbc/api"
 )
 
 type Rows struct {

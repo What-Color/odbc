@@ -21,7 +21,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/xiaofengshuyu/odbc/api"
+	"github.com/What-Color/odbc/api"
 )
 
 var (

@@ -11,7 +11,7 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/xiaofengshuyu/odbc/api"
+	"github.com/What-Color/odbc/api"
 )
 
 type BufferLen api.SQLLEN
